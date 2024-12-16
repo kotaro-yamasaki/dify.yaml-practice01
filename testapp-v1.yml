@@ -1,0 +1,286 @@
+app:
+  description: テストブログでチャットフローを作成。
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: テストブログ01
+  use_icon_as_answer_icon: false
+kind: app
+version: 0.1.4
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: llm
+      id: 1734349561429-source-1734370747112-target
+      source: '1734349561429'
+      sourceHandle: source
+      target: '1734370747112'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: answer
+      id: 1734370747112-source-answer-target
+      source: '1734370747112'
+      sourceHandle: source
+      target: answer
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: answer
+        targetType: knowledge-retrieval
+      id: answer--1734375551960-target
+      source: answer
+      sourceHandle: source
+      target: '1734375551960'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1734375551960--1734376100056-target
+      source: '1734375551960'
+      sourceHandle: ''
+      target: '1734376100056'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 開始
+        type: start
+        variables: []
+      height: 54
+      id: '1734349561429'
+      position:
+        x: -291.34556582725224
+        y: 5.931424796640272
+      positionAbsolute:
+        x: -291.34556582725224
+        y: 5.931424796640272
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '{{#1734370747112.text#}}'
+        desc: ''
+        selected: false
+        title: 回答
+        type: answer
+        variables: []
+      height: 103
+      id: answer
+      position:
+        x: 403.8696582579822
+        y: -49.86425996341865
+      positionAbsolute:
+        x: 403.8696582579822
+        y: -49.86425996341865
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - sys
+          - query
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gemini-1.5-pro
+          provider: google
+        prompt_template:
+        - id: d5df8b3e-89b4-41c0-8192-bf53b4f53bab
+          role: system
+          text: "#role\nあなたは優秀なプロンプト添削者です。ユーザーから入力されたプロンプトを評価してアドバイスをしてください。\n\n#task\n\
+            以下の観点に基づいて、プロンプトを1~5の尺度で評価してください。それぞれの観点について、評価の理由と改善のための提案を詳細に説明してください。\n\
+            \n背景情報：\n質問をするユーザーは自社のブログに埋め込んだgoogle analytics 4のデータを使って、\n- どのような内容のブログが読者を増やしたり減らしたりしているのか、\n\
+            - 読者がどのブログにどれほどの時間滞在しているのか、\n- どのような検索ワードからどの記事に流入しているのか、\n- 顕在ワードは何か、\n\
+            - 顕在ワードの順位推移はどの様な状況か、\n- 注力ワードがうまくクリック数の増加に効果を与えているか（ただし、注力ワードはユーザーが仮説設定したもの)\n\
+            - 読者のサイト閲覧の時間帯や曜日を把握したい\nといった様なブログに関するありとあらゆる情報を分析してブログの読者を増やし、会社の顧客の増加に繋げたいと考えています。\n\
+            \n参考情報：\n\n\n評価の手順：\n1. 評価対象プロンプトを熟読し、背景情報と参考情報を理解する。\n2. 以下の観点ごとに評価を行い、具体的な評価の理由を記録する。\n\
+            3. 各観点の評価結果を踏まえ、改善のための提案を詳細に説明する。\n4. 評価結果と改善提案をまとめ、指定された形式で出力する。\n\n\
+            評価の観点：\n1. 目的の明確さ\n   - プロンプトの目的や意図が明確に伝わるか？\n   - 目的に沿った出力が得られる可能性が高いか？\n\
+            \n2. タスクの具体性\n   - プロンプトで要求されるタスクが具体的に記述されているか？\n   - タスクを遂行するために必要な情報が十分に提供されているか？\n\
+            \n3. 入力情報の適切性\n   - プロンプトで提供される入力情報は、タスクの遂行に適切か？\n   - 入力情報の質と量は十分か？\n\
+            \n4. 出力形式の指定\n   - 期待される出力の形式や構造が明確に指定されているか？\n   - 出力例やテンプレートが提供されているか？\n\
+            \n5. 評価基準の明示\n   - 出力結果の評価基準が明示されているか？\n   - 評価基準は具体的で測定可能か？\n\n6. 創造性の喚起\n\
+            \   - プロンプトは創造的思考を促すような内容か？\n   - 単なる情報の再生ではなく、新しいアイデアの生成を求めているか？\n\n\
+            7. 倫理的配慮\n   - プロンプトの内容は倫理的に問題ないか？\n   - 出力結果が差別的、偏見的、または不適切な内容を含む可能性は低いか？\n\
+            \n8. 言語的明瞭性\n   - プロンプトの文章は明瞭で簡潔か？\n   - 難解な用語や曖昧な表現が避けられているか？\n\n9. 文脈の提供\n\
+            \   - プロンプトは評価対象の背景情報や文脈を十分に提供しているか？\n   - 文脈に基づいて適切な出力が生成される可能性が高いか？\n\
+            \n10. 全体的な完成度\n    - プロンプト全体として、目的の達成に十分な情報と指示が含まれているか？\n    - プロンプトの構成は論理的で一貫しているか？\n\
+            \n出力形式：\n1. 各観点の評価結果（5段階）とその理由\n2. 各観点の改善提案\n3. プロンプト全体の総合評価（5段階）と改善のためのアドバイス\n\
+            4. このプロンプトの評価プロセス自体の改善点\n\n結果の活用方法：\n評価結果をもとにして、より精度の高いプロンプトを完成させ、次のステップで実際にそのプロンプトでAIに質問する。\n\
+            \n上記の評価プロセスを実施し、評価結果と改善提案を提示してください。評価者のスキルや知識レベルに応じて、評価の観点や手順を調整することも可能です。\n\
+            ”””\n\n②改善されたプロンプトを出力するプロンプト\n\n”””\n100点満点を目指してください。\n\nプロンプトを出力する。\n\
+            ”””"
+        - id: d57cf860-a4cb-4ea0-9110-3a4d5ee3dcea
+          role: user
+          text: '{{#context#}}'
+        selected: false
+        title: LLM
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+            variable_selector:
+            - sys
+            - files
+          enabled: false
+      height: 98
+      id: '1734370747112'
+      position:
+        x: 55.213260066083876
+        y: -36.25524569283046
+      positionAbsolute:
+        x: 55.213260066083876
+        y: -36.25524569283046
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 99b5bb5b-f06a-434b-a3f7-27d3d36c8d02
+        desc: ''
+        multiple_retrieval_config:
+          reranking_enable: true
+          reranking_mode: reranking_model
+          reranking_model:
+            model: rerank-english-v2.0
+            provider: cohere
+          top_k: 4
+        query_variable_selector:
+        - '1734370747112'
+        - text
+        retrieval_mode: multiple
+        selected: false
+        title: 知識取得
+        type: knowledge-retrieval
+      height: 92
+      id: '1734375551960'
+      position:
+        x: 667.042615446218
+        y: 193.1538520113699
+      positionAbsolute:
+        x: 667.042615446218
+        y: 193.1538520113699
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1734370747112'
+          - text
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: llama-3.1-405b-reasoning
+          provider: groq
+        prompt_template:
+        - id: 114e219f-9701-4994-91c8-a15e5a21040d
+          role: system
+          text: ''
+        selected: false
+        title: LLM 2
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 98
+      id: '1734376100056'
+      position:
+        x: 992.4282092999993
+        y: 193.1538520113699
+      positionAbsolute:
+        x: 992.4282092999993
+        y: 193.1538520113699
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 176.47210956074775
+      y: 225.4494361265895
+      zoom: 0.5143649540531692
